@@ -1,0 +1,12 @@
+{
+	"extends": "../../tsconfig.json",
+	"compilerOptions": {
+		"types": ["node", "jest"],
+		"incremental": true,
+		"tsBuildInfoFile": "./tsconfig.tsbuildinfo"
+	},
+	"include": [
+		"**/*.ts",
+		"../../libs/integration-hubstaff/src/lib/hubstaff-entity-settings.ts"
+	]
+}

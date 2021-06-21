@@ -1,0 +1,11 @@
+:host {
+  	height: 100%;
+	.task-settings {
+		&__projects {
+			padding: 0 !important;
+		}
+	}
+	.header {
+		display: flex;
+	}	
+}

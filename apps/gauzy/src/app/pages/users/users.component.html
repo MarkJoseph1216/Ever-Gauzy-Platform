@@ -1,0 +1,148 @@
+<nb-card [nbSpinner]="loading" nbSpinnerStatus="primary" nbSpinnerSize="large" class="card-scroll">
+	<nb-card-header class="card-header-title">
+		<div class="card-header-title">
+			<h4> <ngx-header-title [allowEmployee]="false"> {{ 'USERS_PAGE.HEADER' | translate }} </ngx-header-title> </h4>
+		</div>
+		<div class="card-header-title">
+			<div class="mr-2">
+				<ng-template ngxPermissionsOnly="ORG_USERS_EDIT">
+					<ng-template
+						[ngxPermissionsOnly]="[
+							'ORG_INVITE_VIEW',
+							'ORG_INVITE_EDIT'
+						]"
+					>
+						<button
+							nbButton
+							*ngIf="organizationInvitesAllowed"
+							status="primary"
+							(click)="manageInvites()"
+						>
+							{{ 'BUTTONS.MANAGE_INVITES' | translate }}
+						</button>
+					</ng-template>
+				</ng-template>
+			</div>
+			<div>
+				<ga-layout-selector
+					componentName="{{ viewComponentName }}"
+				></ga-layout-selector>
+			</div>
+		</div>
+	</nb-card-header>
+	<nb-card-body>
+		<ng-template ngxPermissionsOnly="ORG_USERS_EDIT">
+			<div class="mb-3">
+				<ng-template ngxPermissionsOnly="ORG_INVITE_EDIT">
+					<button
+						nbButton
+						*ngIf="organizationInvitesAllowed"
+						status="primary"
+						(click)="invite()"
+						class="mr-2"
+					>
+						<nb-icon class="mr-1" icon="email-outline"></nb-icon
+						>{{ 'BUTTONS.INVITE' | translate }}
+					</button>
+				</ng-template>
+				<button nbButton status="success" (click)="add()" class="mr-2">
+					<nb-icon class="mr-1" icon="plus-outline"></nb-icon
+					>{{ 'BUTTONS.ADD_NEW' | translate }}
+				</button>
+				<ng-template ngxPermissionsOnly="TENANT_ADD_EXISTING_USER">
+					<button
+						(click)="showAddCard = !showAddCard"
+						nbButton
+						status="warning"
+						class="mr-2"
+					>
+						<nb-icon class="mr-1" icon="plus-outline"></nb-icon
+						>{{ 'BUTTONS.ADD_EXISTING' | translate }}
+					</button>
+				</ng-template>
+				<ng-container *ngIf="dataLayoutStyle === 'TABLE'">
+					<ng-container
+						*ngTemplateOutlet="actionButtons"
+					></ng-container>
+				</ng-container>
+				<ng-template ngxPermissionsOnly="TENANT_ADD_EXISTING_USER">
+					<ga-edit-user-mutation
+						*ngIf="showAddCard"
+						[organization]="organization"
+						(addOrEditUser)="addOrEditUser($event)"
+						(canceled)="cancel()"
+					>
+					</ga-edit-user-mutation>
+				</ng-template>
+			</div>
+		</ng-template>
+		<ng2-smart-table
+			style="cursor: pointer"
+			[settings]="settingsSmartTable"
+			[source]="sourceSmartTable"
+			(userRowSelect)="selectUserTmp($event)"
+			*ngIf="dataLayoutStyle === 'TABLE'"
+			#usersTable
+		>
+		</ng2-smart-table>
+		<ul class="flex-container" *ngIf="dataLayoutStyle === 'CARDS_GRID'">
+			<li class="flex-item" *ngFor="let x of userData">
+				<div class="fullName">
+					<img [src]="x.imageUrl" alt="Avatar" class="avatar" />
+					<span>{{ x.fullName }}</span>
+				</div>
+				<div class="email">
+					<span class="info-value">{{ x.email }}</span>
+				</div>
+				<div class="info-line">
+					<span class="info-meta">{{
+						'USERS_PAGE.ROLE.ROLE' | translate
+					}}</span>
+					<span class="info-value">{{ x.role }}</span>
+				</div>
+				<nb-card-footer class="card-footer">
+					<ng-container
+						*ngTemplateOutlet="
+							actionButtons;
+							context: {
+								buttonSize: 'tiny',
+								selectedItem: x
+							}
+						"
+					>
+					</ng-container>
+				</nb-card-footer>
+			</li>
+		</ul>
+	</nb-card-body>
+</nb-card>
+<ng-template
+	#actionButtons
+	let-buttonSize="buttonSize"
+	let-selectedItem="selectedItem"
+>
+	<ng-template ngxPermissionsOnly="ORG_USERS_EDIT">
+		<button
+			nbButton
+			[disabled]="!selectedItem && disableButton"
+			(click)="edit(selectedItem)"
+			status="info"
+			class="mr-2"
+			[size]="buttonSize || 'medium'"
+		>
+			<nb-icon class="mr-1" icon="edit-outline"></nb-icon
+			>{{ 'BUTTONS.EDIT' | translate }}
+		</button>
+		<button
+			nbButton
+			[disabled]="!selectedItem && disableButton"
+			(click)="remove(selectedUser, selectedItem)"
+			status="danger"
+			class="mr-2"
+			[size]="buttonSize || 'medium'"
+		>
+			<nb-icon class="mr-1" icon="trash-2-outline"></nb-icon
+			>{{ 'BUTTONS.REMOVE' | translate }}
+		</button>
+	</ng-template>
+</ng-template>

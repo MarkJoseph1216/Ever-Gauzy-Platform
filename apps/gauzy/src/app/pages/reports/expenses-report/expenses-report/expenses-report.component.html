@@ -1,0 +1,36 @@
+<nb-card class="card-scroll">
+	<nb-card-header>
+		<h4>
+			<ngx-header-title>
+				{{ 'REPORT_PAGE.EXPENSES_REPORT' | translate }}
+			</ngx-header-title>
+		</h4>
+		<div>
+			{{ logRequest?.startDate | date }} -
+			{{ logRequest?.endDate | date }}
+		</div>
+	</nb-card-header>
+	<nb-card-body>
+		<div class="filters mt-4 mb-4">
+			<ngx-filters
+				dateRange="custom_range"
+				[hasEmployeeFilter]="false"
+				[hasActivityLevelFilter]="false"
+				[hasSourceFilter]="false"
+				[hasLogTypeFilter]="false"
+				[hasProjectFilter]="false"
+				[saveFilters]="false"
+				[filters]="logRequest"
+				(filtersChange)="filtersChange($event)"
+			></ngx-filters>
+		</div>
+		<div class="daily-time-report">
+			<nb-card>
+				<nb-card-body>
+					<ngx-line-chart [data]="chartData"></ngx-line-chart>
+				</nb-card-body>
+			</nb-card>
+		</div>
+		<ga-expenses-report-grid [filters]="filters"></ga-expenses-report-grid>
+	</nb-card-body>
+</nb-card>

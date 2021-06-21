@@ -1,0 +1,611 @@
+<nb-card [nbSpinner]="loading" nbSpinnerStatus="primary" nbSpinnerSize="large" class="card-scroll">
+	<nb-card-header class="card-header-title">
+		<div class="card-header-title">
+			<h4> <ngx-header-title [allowEmployee]="false"> {{ (!isEstimate ? 'INVOICES_PAGE.HEADER' : 'INVOICES_PAGE.ESTIMATES.HEADER') | translate }} </ngx-header-title> </h4>
+		</div>
+		<div>
+			<ga-layout-selector
+				[componentName]="viewComponentName"
+			></ga-layout-selector>
+		</div>
+	</nb-card-header>
+	<nb-card-body>
+		<nb-tabset (changeTab)="onChangeTab($event)">
+			<nb-tab
+				[tabTitle]="'INVOICES_PAGE.ACTIONS' | translate"
+				[tabId]="invoiceTabsEnum.ACTIONS"
+			>
+				<ng-template
+					[ngxPermissionsOnly]="['INVOICES_EDIT', 'INVOICES_VIEW']"
+				>
+					<div class="mb-3">
+						<div class="actions-container">
+							<ng-template ngxPermissionsOnly="INVOICES_EDIT">
+								<button
+									nbButton
+									status="success"
+									(click)="add()"
+									class="mr-2"
+								>
+									<nb-icon icon="plus-outline"> </nb-icon>
+								</button>
+								<ng-container
+									*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+								>
+									<ng-container
+										*ngTemplateOutlet="actionButtons"
+									></ng-container>
+								</ng-container>
+							</ng-template>
+							<ng-template ngxPermissionsOnly="INVOICES_VIEW">
+								<button
+									nbButton
+									status="info"
+									(click)="view()"
+									class="mr-2"
+									[disabled]="disableButton"
+								>
+									<nb-icon icon="file-outline"></nb-icon>
+									{{ 'BUTTONS.VIEW' | translate }}
+								</button>
+							</ng-template>
+							<div *ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE">
+									<button
+									nbButton
+									nbPopoverPlacement="bottom"
+									[nbPopover]="actionsPopover"
+									nbPopoverTrigger="noop"
+									(click)="toggleActionsPopover()"
+								>
+									<nb-icon
+										icon="more-vertical-outline"
+									></nb-icon>
+								</button>
+							</div>
+							<div>
+								<button
+									nbButton
+									nbPopoverPlacement="bottom"
+									[nbPopover]="settingsPopover"
+									nbPopoverTrigger="noop"
+									(click)="toggleTableSettingsPopover()"
+								>
+									<nb-icon
+										icon="settings-2-outline"
+									></nb-icon>
+								</button>
+							</div>
+						</div>
+					</div>
+				</ng-template>
+			</nb-tab>
+			<nb-tab
+				class="remove-scroll"
+				[tabTitle]="'INVOICES_PAGE.SEARCH' | translate"
+				tabId="search"
+				[tabId]="invoiceTabsEnum.SEARCH"
+			>
+				<form [formGroup]="searchForm" (ngSubmit)="search()">
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputInvoiceNumber" class="label">
+									<span>
+										{{ ((!isEstimate) ? 'INVOICES_PAGE.INVOICE_NUMBER' : 'INVOICES_PAGE.ESTIMATE_NUMBER') | translate }}
+									</span>
+								</label>
+								<input
+									type="number"
+									nbInput
+									[placeholder]="((!isEstimate) ? 'INVOICES_PAGE.INVOICE_NUMBER' : 'INVOICES_PAGE.ESTIMATE_NUMBER') | translate"
+									formControlName="invoiceNumber"
+									id="inputInvoiceNumber"
+									fullWidth
+								/>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputOrganizationContact" class="label">
+									<span>{{
+										'INVOICES_PAGE.CONTACT' | translate
+									}}</span>
+								</label>
+								<ga-contact-select 
+									[clearable]="true"
+									formControlName="organizationContact"
+									[placeholder]="'POP_UPS.ALL_CONTACTS' | translate"
+								></ga-contact-select>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputInvoiceDate" class="label">
+									<span> {{ ((!isEstimate) ? 'INVOICES_PAGE.INVOICE_DATE' : 'INVOICES_PAGE.ESTIMATE_DATE') | translate }} </span>
+								</label>
+								<input
+									formControlName="invoiceDate"
+									type="text"
+									nbInput
+									[placeholder]="((!isEstimate) ? 'INVOICES_PAGE.INVOICE_DATE' : 'INVOICES_PAGE.ESTIMATE_DATE') | translate"
+									[nbDatepicker]="invoiceDatePicker"
+									id="inputInvoiceDate"
+									fullWidth
+									required
+								/>
+								<nb-datepicker
+									#invoiceDatePicker
+								></nb-datepicker>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputDueDate" class="label">{{
+									'INVOICES_PAGE.DUE_DATE' | translate
+								}}</label>
+								<input
+									nbInput
+									[placeholder]="'INVOICES_PAGE.DUE_DATE' | translate"
+									[nbDatepicker]="dueDatePicker"
+									formControlName="dueDate"
+									id="inputDueDate"
+									fullWidth
+								/>
+								<nb-datepicker #dueDatePicker></nb-datepicker>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputTotalValue" class="label">
+									{{
+										'INVOICES_PAGE.TOTAL_VALUE' | translate
+									}}
+								</label>
+								<input
+									type="number"
+									nbInput
+									[placeholder]="'INVOICES_PAGE.TOTAL_VALUE' | translate"
+									formControlName="totalValue"
+									id="inputTotalValue"
+									fullWidth
+								/>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-group">
+								<ga-currency
+									formControlName="currency"
+									[formControl]="searchForm.get('currency')"
+									(optionChange)="currencyChanged($event)"
+								>
+								</ga-currency>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<div class="form-group">
+								<label for="inputStatus" class="label">
+									{{ 'INVOICES_PAGE.STATUS' | translate }}
+								</label>
+								<nb-select
+									id="inputStatus"
+									*ngIf="!isEstimate"
+									formControlName="status"
+									fullWidth
+									[placeholder]="'FORM.PLACEHOLDERS.STATUS' | translate"
+								>
+									<nb-option
+										*ngFor="
+											let status of invoiceStatusTypes
+										"
+										[value]="status"
+									>
+										{{
+											'INVOICES_PAGE.STATUSES.' + status
+												| translate
+										}}
+									</nb-option>
+								</nb-select>
+								<nb-select
+									id="inputStatus"
+									*ngIf="isEstimate"
+									formControlName="status"
+									fullWidth
+									[placeholder]="'FORM.PLACEHOLDERS.STATUS' | translate"
+								>
+									<nb-option
+										*ngFor="
+											let status of estimateStatusTypes
+										"
+										[value]="status"
+									>
+										{{
+											'INVOICES_PAGE.STATUSES.' + status
+												| translate
+										}}
+									</nb-option>
+								</nb-select>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<ga-tags-color-input
+								[selectedTags]="searchForm.get('tags').value"
+								(selectedTagsEvent)="selectedTagsEvent($event)"
+								[isOrgLevel]="true"
+							>
+							</ga-tags-color-input>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-4">
+							<button
+								type="submit"
+								class="mr-3"
+								status="success"
+								nbButton
+							>
+								{{ 'BUTTONS.SEARCH' | translate }}
+							</button>
+						</div>
+						<div class="col-sm-4">
+							<button
+								type="reset"
+								class="mr-3"
+								status="info"
+								nbButton
+								(click)="reset()"
+							>
+								{{ 'BUTTONS.RESET' | translate }}
+							</button>
+						</div>
+					</div>
+				</form>
+			</nb-tab>
+			<nb-tab
+				[tabTitle]="'INVOICES_PAGE.HISTORY' | translate"
+				[tabId]="invoiceTabsEnum.HISTORY"
+			>
+				<ng-container *ngIf="selectedInvoice">
+					<form 
+						[formGroup]="historyForm" 
+						#historyFormDirective="ngForm" 
+						(ngSubmit)="addComment(historyFormDirective)"
+					>
+						<div class="col-3 px-0">
+							<textarea
+								nbInput
+								placeholder="Comment"
+								fullWidth
+								formControlName="comment"
+							></textarea>
+						</div>
+						<div class="mt-3">
+							<button
+								type="submit"
+								class="mx-0"
+								nbButton
+								status="info"
+								[disabled]="disableButton"
+							>
+								{{ 'BUTTONS.ADD_COMMENT' | translate }}
+							</button>
+						</div>
+					</form>
+				</ng-container>
+				
+				<nb-list-item *ngIf="disableButton" class="history-list-select">
+					{{ ((!isEstimate) ? 'INVOICES_PAGE.SELECT_INVOICE_TO_VIEW_HISTORY' : 'INVOICES_PAGE.ESTIMATES.SELECT_ESTIMATE_TO_VIEW_HISTORY') | translate }}
+				</nb-list-item>
+				<nb-list *ngIf="!disableButton" class="history-list">
+					<nb-list-item
+						*ngFor="let history of histories"
+						class="history-list-item"
+						style="align-items: baseline"
+					>
+						<div class="d-flex">
+							<div>
+								<div class="history-item">
+									<span class="history-action">{{ history.action }}</span> 
+									- {{ history.user.name }} 
+								</div>
+								<div class="history-date history-item">
+									{{ history.createdAt | dateTimeFormat }}
+								</div>
+							</div>
+						</div>
+					</nb-list-item>
+				</nb-list>
+			</nb-tab>
+		</nb-tabset>
+		
+		<ng-template 
+			[ngIf]="dataLayoutStyle === componentLayoutStyleEnum.TABLE" 
+			[ngIfElse]="gridLayout"
+		>
+			<ng2-smart-table
+				class="tags-table"
+				[settings]="settingsSmartTable"
+				[source]="smartTableSource"
+				(userRowSelect)="selectInvoice($event)"
+				style="cursor: pointer"
+				#invoicesTable
+			>
+			</ng2-smart-table>
+		</ng-template>
+		<ng-template #gridLayout>
+			<ga-card-grid
+				[settings]="settingsSmartTable"
+				[source]="invoices"
+				[buttonTemplate]="actionButtons"
+				[cardSize]="'big'"
+			></ga-card-grid>
+			<div 
+				*ngIf="dataLayoutStyle === componentLayoutStyleEnum.CARDS_GRID"
+				class="pagination-container">
+				<ng-container *ngIf="pagination.totalItems > pagination.itemsPerPage">
+					<ga-pagination 
+						(selectedPage)="onPageChange($event)"
+						[doEmit]="false"
+						[totalItems]="pagination?.totalItems" 
+						[itemsPerPage]="pagination?.itemsPerPage" 
+						[activePage]="pagination?.activePage">
+					</ga-pagination>
+				</ng-container>
+			</div>
+		</ng-template>
+	</nb-card-body>
+</nb-card>
+
+<ng-template
+	#actionButtons
+	let-buttonSize="buttonSize"
+	let-selectedItem="selectedItem"
+>
+	<div class="btn-group">
+		<ng-template ngxPermissionsOnly="INVOICES_EDIT">
+			<button
+				nbButton
+				status="info"
+				(click)="edit(selectedItem)"
+				class="mr-2"
+				[disabled]="!selectedItem && disableButton"
+				[size]="buttonSize || 'medium'"
+			>
+				<nb-icon icon="edit-outline"></nb-icon>
+			</button>
+			<button
+				nbButton
+				status="info"
+				(click)="download(selectedItem)"
+				class="mr-2"
+				[disabled]="!selectedItem && disableButton"
+				[size]="buttonSize || 'medium'"
+			>
+				<nb-icon icon="download-outline"> </nb-icon>
+			</button>
+			<nb-select
+				filled
+				status="info"
+				class="mr-2"
+				*ngIf="!isEstimate"
+				placeholder="{{ 'INVOICES_PAGE.SET_STATUS' | translate }}"
+				[(selected)]="status"
+				[disabled]="disableButton"
+				(selectedChange)="selectStatus($event)"
+				[size]="dataLayoutStyle === 'CARDS_GRID' ? 'tiny' : 'medium'"
+			>
+				<nb-option
+					*ngFor="let status of invoiceStatusTypes"
+					[value]="status"
+				>
+					{{ 'INVOICES_PAGE.STATUSES.' + status | translate }}
+				</nb-option>
+			</nb-select>
+			<nb-select
+				filled
+				status="info"
+				class="mr-2"
+				*ngIf="isEstimate"
+				placeholder="{{ 'INVOICES_PAGE.SET_STATUS' | translate }}"
+				[(selected)]="status"
+				[disabled]="disableButton"
+				(selectedChange)="selectStatus($event)"
+				[size]="dataLayoutStyle === 'CARDS_GRID' ? 'tiny' : 'medium'"
+			>
+				<nb-option
+					*ngFor="let status of estimateStatusTypes"
+					[value]="status"
+				>
+					{{ 'INVOICES_PAGE.STATUSES.' + status | translate }}
+				</nb-option>
+			</nb-select>
+		</ng-template>
+		<button
+			nbButton
+			[nbContextMenu]="settingsContextMenu"
+			nbContextMenuPlacement="top"
+			(click)="selectMenu(selectedItem)"
+			*ngIf="dataLayoutStyle === 'CARDS_GRID'"
+			[ngStyle]="{ transform: 'scale(0.65)' }"
+		>
+			<nb-icon class="icons" icon="settings-2-outline"></nb-icon>
+		</button>
+	</div>
+
+	<button
+		*ngIf="!isEstimate && dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+		nbButton
+		status="info"
+		(click)="payments()"
+		class="mr-2"
+		[disabled]="!selectedItem && disableButton"
+		[size]="buttonSize || 'medium'"
+	>
+		<nb-icon icon="clipboard-outline"></nb-icon>
+		{{ 'BUTTONS.PAYMENTS' | translate }}
+	</button>
+	<button
+		*ngIf="isEstimate && dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+		nbButton
+		status="info"
+		(click)="convert(selectedItem)"
+		class="mr-2"
+		[disabled]="!selectedItem && disableButton"
+		[size]="buttonSize || 'medium'"
+	>
+		<nb-icon icon="swap"> </nb-icon>
+		{{ 'BUTTONS.CONVERT_TO_INVOICE' | translate }}
+	</button>
+</ng-template>
+
+<ng-template #settingsPopover>
+	<div class="popover-container">
+		<div class="show-columns" *ngIf="columns">
+			<label class="show-columns-label label">
+				{{ 'INVOICES_PAGE.SHOW_COLUMNS' | translate }}
+			</label>
+			<nb-select
+				class="show-columns-select"
+				[multiple]="true"
+				[(selected)]="columns"
+				(selectedChange)="selectColumn($event)"
+				placeholder="{{ 'INVOICES_PAGE.SHOW_COLUMNS' | translate }}"
+			>
+				<nb-option
+					class="column"
+					*ngFor="let column of getColumns()"
+					[value]="column"
+				>
+					{{ 'INVOICES_PAGE.' + column | translate }}
+				</nb-option>
+			</nb-select>
+		</div>
+		<div class="per-page-container">
+			<div class="per-page">
+				<label class="label per-page-label" *ngIf="!isEstimate">
+					{{ 'INVOICES_PAGE.INVOICES_PER_PAGE' | translate }}
+				</label>
+				<label class="label per-page-label" *ngIf="isEstimate">
+					{{ 'INVOICES_PAGE.ESTIMATES_PER_PAGE' | translate }}
+				</label>
+				<input
+					class="per-page-input"
+					[(ngModel)]="perPage"
+					type="number"
+					nbInput
+				/>
+				<button
+					class="per-page-button"
+					status="success"
+					nbButton
+					(click)="showPerPage()"
+				>
+					{{ 'BUTTONS.SAVE' | translate }}
+				</button>
+			</div>
+		</div>
+		<div class="mt-3 text-center">
+			<nb-checkbox
+				(checkedChange)="toggleIncludeArchived($event)"
+				status="warning"
+				class="mr-3"
+			>
+				{{ 'FORM.CHECKBOXES.INCLUDE_ARCHIVED' | translate }}
+			</nb-checkbox>
+		</div>
+	</div>
+</ng-template>
+
+<ng-template #actionsPopover>
+	<div class="popover-container d-flex flex-column">
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="addInternalNote()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="book-open-outline"> </nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.NOTE' | translate }}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="duplicated()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="copy-outline"></nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.DUPLICATE' | translate }}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="send()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="upload-outline"> </nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.SEND' | translate }}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="generatePublicLink()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="link-2-outline"> </nb-icon>
+			<span class="icon-text">{{
+				'BUTTONS.PUBLIC_LINK' | translate
+			}}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="email()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="email-outline"> </nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.EMAIL' | translate }}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="exportToCsv()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="file-text-outline"> </nb-icon>
+			<span class="icon-text">{{
+				'BUTTONS.EXPORT_TO_CSV' | translate
+			}}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="info"
+			(click)="archive()"
+			[disabled]="disableButton || selectedInvoice.isArchived"
+		>
+			<nb-icon icon="archive-outline"> </nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.ARCHIVE' | translate }}</span>
+		</button>
+		<button
+			*ngIf="dataLayoutStyle === componentLayoutStyleEnum.TABLE"
+			nbButton
+			status="danger"
+			(click)="delete()"
+			[disabled]="disableButton"
+		>
+			<nb-icon icon="trash-2-outline"> </nb-icon>
+			<span class="icon-text">{{ 'BUTTONS.DELETE' | translate }}</span>
+		</button>
+	</div>
+</ng-template>

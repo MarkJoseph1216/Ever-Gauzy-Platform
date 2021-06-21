@@ -1,0 +1,24 @@
+# cache
+.cache
+
+# dependencies
+node_modules/
+
+# sqlite3 database
+*.sqlite3
+*.sqlite3-journal
+
+# IDEs and editors
+/.idea
+
+# misc
+npm-debug.log
+dist
+public
+
+# Typeorm Logs
+ormlogs.log
+
+.env
+export
+import

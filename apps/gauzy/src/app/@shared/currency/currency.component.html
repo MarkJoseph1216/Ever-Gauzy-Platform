@@ -1,0 +1,25 @@
+<ng-container>
+	<div class="form-group">
+		<label class="label" for="currencySelect">{{
+			placeholder || 'FORM.LABELS.CURRENCY' | translate
+		}}</label>
+		<nb-select
+			class="d-block"
+			[size]="size"
+			[placeholder]=" placeholder || 'FORM.PLACEHOLDERS.ALL_CURRENCIES' | translate" 
+			fullWidth
+			[status]="formControl.invalid && formControl.touched ? 'danger' : 'basic'"
+			[(ngModel)]="currency"
+			[formControl]="formControl"
+			(selectedChange)="onSelectChange($event)"
+		>
+			<nb-option
+				*ngFor="let item of currencies$ | async"
+				[value]="item.isoCode"
+				(click)="onOptionChange(item)"
+			>
+				{{ item.currency + ' (' + item.isoCode + ')' }}
+			</nb-option>
+		</nb-select>
+	</div>
+</ng-container>

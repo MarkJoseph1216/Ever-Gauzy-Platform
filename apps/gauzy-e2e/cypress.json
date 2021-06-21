@@ -1,0 +1,14 @@
+{
+	"projectId": "2n3iur",
+	"fileServerFolder": ".",
+	"fixturesFolder": "./src/fixtures",
+	"integrationFolder": "./src/integration",
+	"pluginsFile": "./src/plugins/index.ts",
+	"supportFile": "./src/support/index.ts",
+	"video": true,
+	"videosFolder": "../../dist/cypress/apps/gauzy-e2e/videos",
+	"screenshotsFolder": "../../dist/cypress/apps/gauzy-e2e/screenshots",
+	"chromeWebSecurity": false,
+	"viewportWidth": 1920,
+	"viewportHeight": 1080
+}

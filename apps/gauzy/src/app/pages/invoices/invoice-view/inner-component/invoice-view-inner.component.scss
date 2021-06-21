@@ -1,0 +1,15 @@
+.table {
+  margin-top: 50px;
+  padding: 0 3rem;
+}
+
+.bottom-data-container {
+  width: 25%;
+  justify-content: space-between;
+  margin-left: auto;
+}
+
+::ng-deep ga-invoice-view-inner {
+  padding: 0 100px;
+  padding-top: 25px;
+}

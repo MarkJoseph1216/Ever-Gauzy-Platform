@@ -1,0 +1,177 @@
+<nb-card-body
+	class="contentToConvert"
+	[nbSpinner]="loading"
+	nbSpinnerStatus="primary"
+	nbSpinnerSize="large"
+	*ngIf="invoice && invoiceDate && dueDate"
+>
+	<div class="shadow py-5">
+		<div class="d-flex justify-content-between">
+			<div class="ml-5">
+				<div class="mb-5">
+					<div class="font-weight-bold">
+						{{ 'INVOICES_PAGE.VIEW.FROM' | translate }}:
+					</div>
+					<div>{{ invoice?.fromOrganization?.name }}</div>
+				</div>
+				<div>
+					<div class="font-weight-bold">
+						{{ 'INVOICES_PAGE.VIEW.TO' | translate }}:
+					</div>
+					<div>{{ invoice?.toContact?.name }}</div>
+				</div>
+			</div>
+			<div class="mr-5">
+				<div class="mb-5 font-weight-bold">
+					<h4 class="d-inline mr-2">
+						{{ ((!isEstimate) ? 'INVOICES_PAGE.INVOICE_NUMBER' : 'INVOICES_PAGE.ESTIMATE_NUMBER') | translate}}
+					</h4>
+					<h4 class="d-inline"> {{ invoice?.invoiceNumber }} </h4>
+				</div>
+				<div class="d-flex">
+					<div>
+						<div class="font-weight-bold"> 
+							{{ ((!isEstimate) ? 'INVOICES_PAGE.INVOICE_DATE' : 'INVOICES_PAGE.ESTIMATE_DATE') | translate }} 
+						</div>
+						<div class="font-weight-bold text-right">
+							{{ 'INVOICES_PAGE.DUE_DATE' | translate }}:
+						</div>
+					</div>
+					<div class="ml-5">
+						<div>{{ invoiceDate | dateFormat }}</div>
+						<div>{{ dueDate | dateFormat }}</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="table">
+			<ng2-smart-table
+				*ngIf="isTableLoaded"
+				[settings]="settingsSmartTable"
+				[source]="smartTableSource"
+				style="cursor: pointer"
+			>
+			</ng2-smart-table>
+		</div>
+
+		<div class="d-flex justify-content-between">
+			<div
+				*ngIf="invoice.internalNote && showInternalNote"
+				class="mt-5 ml-5"
+			>
+				<h5 class="font-weight-bold">
+					{{
+						'INVOICES_PAGE.INTERNAL_NOTE.INTERNAL_NOTE' | translate
+					}}:
+				</h5>
+				{{ invoice.internalNote }}
+			</div>
+			<div class="d-flex bottom-data-container mt-5">
+				<div class="d-flex flex-column text-right font-weight-bold">
+					<div class="mt-2">
+						{{ 'INVOICES_PAGE.TAX' | translate }}:
+					</div>
+					<div class="mt-2">
+						{{ 'INVOICES_PAGE.TAX_2' | translate }}:
+					</div>
+					<div class="mt-2">
+						{{
+							'INVOICES_PAGE.INVOICES_SELECT_DISCOUNT_VALUE'
+								| translate
+						}}:
+					</div>
+					<div class="mt-2">
+						{{ 'INVOICES_PAGE.TOTAL_VALUE' | translate }}:
+					</div>
+					<div
+						*ngIf="invoice.hasRemainingAmountInvoiced"
+						class="mt-2"
+					>
+						{{ 'INVOICES_PAGE.ALREADY_PAID' | translate }}:
+					</div>
+					<div
+						*ngIf="invoice.hasRemainingAmountInvoiced"
+						class="mt-2"
+					>
+						{{ 'INVOICES_PAGE.AMOUNT_DUE' | translate }}:
+					</div>
+				</div>
+				<div class="d-flex flex-column mr-5 text-right">
+					<div class="mt-2">
+						<span
+							*ngIf="
+								invoice.taxType === discountTaxTypes.FLAT_VALUE
+							"
+						>
+							{{ invoice.currency }}
+						</span>
+						{{ invoice?.tax }}
+						<span
+							*ngIf="invoice.taxType === discountTaxTypes.PERCENT"
+						>
+							%
+						</span>
+					</div>
+					<div class="mt-2">
+						<span
+							*ngIf="
+								invoice.taxType === discountTaxTypes.FLAT_VALUE
+							"
+						>
+							{{ invoice.currency }}
+						</span>
+						{{ invoice?.tax2 }}
+						<span
+							*ngIf="invoice.taxType === discountTaxTypes.PERCENT"
+						>
+							%
+						</span>
+					</div>
+					<div class="mt-2">
+						<span
+							*ngIf="
+								invoice.discountType ===
+								discountTaxTypes.FLAT_VALUE
+							"
+						>
+							{{ invoice.currency }}
+						</span>
+						<span>
+							{{ invoice?.discountValue }}
+						</span>
+						<span
+							*ngIf="
+								invoice.discountType ===
+								discountTaxTypes.PERCENT
+							"
+						>
+							%
+						</span>
+					</div>
+					<div class="mt-2">
+						<span>
+							{{ invoice?.currency }} {{ invoice?.totalValue }}
+						</span>
+					</div>
+					<div
+						*ngIf="invoice.hasRemainingAmountInvoiced"
+						class="mt-2"
+					>
+						<span>
+							{{ invoice?.currency }} {{ invoice?.alreadyPaid }}
+						</span>
+					</div>
+					<div
+						*ngIf="invoice.hasRemainingAmountInvoiced"
+						class="mt-2"
+					>
+						<span>
+							{{ invoice?.currency }} {{ invoice?.amountDue }}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</nb-card-body>

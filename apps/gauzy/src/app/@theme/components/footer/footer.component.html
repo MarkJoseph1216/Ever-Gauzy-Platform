@@ -1,0 +1,42 @@
+<span class="created-by"
+	><b
+		>© 2019-{{ 'FOOTER.PRESENT' | translate }},
+		<a href="{{ companySiteLink }}" target="_blank">{{ companySite }}</a>
+		{{ 'FOOTER.BY' | translate }}
+		<a href="{{ companyLink }}" target="_blank">{{ companyName }}</a
+		>. {{ 'FOOTER.RIGHTS_RESERVED' | translate }}</b
+	></span
+>
+<div class="right-side">
+	<div class="mr-2" *ngIf="user">
+		<a [routerLink]="['legal/terms']" target="_blank">{{
+			'FOOTER.TERMS_OF_SERVICE' | translate
+		}}</a>
+		<span class="mx-1">|</span>
+		<a [routerLink]="['legal/privacy']" target="_blank">{{
+			'FOOTER.PRIVACY_POLICY' | translate
+		}}</a>
+	</div>
+	<div class="socials">
+		<a
+			href="{{ companyGithubLink }}"
+			target="_blank"
+			class="ion ion-logo-github"
+		></a>
+		<a
+			href="{{ companyFacebookLink }}"
+			target="_blank"
+			class="ion ion-logo-facebook"
+		></a>
+		<a
+			href="{{ companyTwitterLink }}"
+			target="_blank"
+			class="ion ion-logo-twitter"
+		></a>
+		<a
+			href="{{ companyLinkedinLink }}"
+			target="_blank"
+			class="ion ion-logo-linkedin"
+		></a>
+	</div>
+</div>

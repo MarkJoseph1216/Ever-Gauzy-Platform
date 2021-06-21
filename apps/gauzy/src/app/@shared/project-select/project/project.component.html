@@ -1,0 +1,33 @@
+<ng-template [ngIf]="!multiple" [ngIfElse]="multipleSelect">
+	<ng-select
+		[addTag]="hasPermissionProjEdit ? createNew : null"
+		[multiple]="multiple"
+		[clearable]="true"
+		[disabled]="disabled"
+		[items]="projects"
+		(change)="selectProject($event)"
+		[(ngModel)]="projectId"
+		[placeholder]="
+			placeholder || 'FORM.PLACEHOLDERS.ALL_PROJECTS' | translate
+		"
+		bindValue="id"
+		bindLabel="name"
+		appendTo="body"
+	>
+	</ng-select>
+</ng-template>
+<ng-template #multipleSelect>
+	<nb-select
+		class="multiple-select"
+		[disabled]="disabled"
+		[multiple]="multiple"
+		[placeholder]="
+			placeholder || 'FORM.PLACEHOLDERS.ALL_PROJECTS' | translate
+		"
+		[(selected)]="projectId"
+	>
+		<nb-option *ngFor="let project of projects" [value]="project.id">
+			{{ project.name }}
+		</nb-option>
+	</nb-select>
+</ng-template>

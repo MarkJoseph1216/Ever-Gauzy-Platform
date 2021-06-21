@@ -1,0 +1,40 @@
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { Module } from '@nestjs/common';
+import { RouterModule } from 'nest-router';
+import { EmployeeAppointment } from './employee-appointment.entity';
+import { EmployeeAppointmentController } from './employee-appointment.controller';
+import { EmployeeAppointmentService } from './employee-appointment.service';
+import { CqrsModule } from '@nestjs/cqrs';
+import { EmployeeAppointmentCreateHandler } from './commands/handlers/employee-appointment.create.handler';
+import { EmployeeAppointmentUpdateHandler } from './commands/handlers/employee-appointment.update.handler';
+import { EmailService, EmailModule } from '../email';
+import { OrganizationService } from '../organization/organization.service';
+import { EmployeeService } from '../employee/employee.service';
+import { EmployeeModule } from '../employee/employee.module';
+import { OrganizationModule } from '../organization/organization.module';
+import { TenantModule } from '../tenant/tenant.module';
+
+@Module({
+	imports: [
+		RouterModule.forRoutes([
+			{ path: '/employee-appointment', module: EmployeeAppointmentModule }
+		]),
+		TypeOrmModule.forFeature([EmployeeAppointment]),
+		EmailModule,
+		EmployeeModule,
+		OrganizationModule,
+		CqrsModule,
+		TenantModule
+	],
+	controllers: [EmployeeAppointmentController],
+	providers: [
+		EmailService,
+		EmployeeService,
+		OrganizationService,
+		EmployeeAppointmentService,
+		EmployeeAppointmentCreateHandler,
+		EmployeeAppointmentUpdateHandler
+	],
+	exports: [EmployeeAppointmentService]
+})
+export class EmployeeAppointmentModule {}

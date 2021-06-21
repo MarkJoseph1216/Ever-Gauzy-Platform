@@ -1,0 +1,105 @@
+<form [formGroup]="form" *ngIf="form">
+	<nb-card>
+		<nb-card-header>
+			<div class="row">
+				<div class="col-6">
+					<h4>
+						<ngx-header-title>
+							{{ 'ACCOUNTING_TEMPLATES_PAGE.HEADER' | translate }}
+						</ngx-header-title>
+					</h4>
+				</div>
+				<div class="col-2 select-block">
+					<label class="label" for="languageCode">
+						{{ 'FORM.LABELS.LANGUAGE' | translate }}
+					</label>
+					<ngx-language-selector
+						class="d-block"
+						size="small"
+						[template]="'ng-select'"
+						formControlName="languageCode"
+						(selectedLanguageEvent)="subject$.next()"
+					>
+					</ngx-language-selector>
+				</div>
+				<div class="col-2 select-block">
+					<label class="label" for="templateName">
+						{{ 'FORM.PLACEHOLDERS.TEMPLATES' | translate }}
+					</label>
+					<nb-select
+						id="templateName"
+						class="d-block"
+						size="small"
+						placeholder="{{
+							'FORM.LABELS.TEMPLATE_NAME' | translate
+						}}"
+						formControlName="templateType"
+						(selectedChange)="subject$.next()"
+					>
+						<nb-option
+							*ngFor="let name of templateTypes"
+							[value]="name"
+						>
+							{{
+								'ACCOUNTING_TEMPLATES_PAGE.TEMPLATE_NAMES.' +
+									name | translate
+							}}
+						</nb-option>
+					</nb-select>
+				</div>
+				<div
+					class="col-2 d-flex justify-content-end align-items-center"
+				>
+					<button nbButton status="success" (click)="onSave()">
+						{{ 'EMAIL_TEMPLATES_PAGE.SAVE' | translate }}
+					</button>
+				</div>
+			</div>
+		</nb-card-header>
+		<nb-card-body>
+			<nb-layout>
+				<nb-layout-column class="p-0">
+					<nb-card>
+						<nb-card-body>
+							<div class="form-group">
+								<label class="label" for="template">
+									{{
+										'FORM.LABELS.TEMPLATE_BODY' | translate
+									}}
+								</label>
+								<ace-editor
+									#templateEditor
+									id="template"
+									[mode]="'handlebars'"
+									style="height: 80vh; font-size: medium"
+									[durationBeforeCallback]="400"
+									(textChange)="onTemplateChange($event)"
+								>
+								</ace-editor>
+							</div>
+						</nb-card-body>
+					</nb-card>
+				</nb-layout-column>
+
+				<nb-layout-column>
+					<nb-card>
+						<nb-card-body>
+							<div class="form-group">
+								<label class="label" for="previewTemplate">
+									{{
+										'FORM.LABELS.TEMPLATE_PREVIEW'
+											| translate
+									}}
+								</label>
+								<div
+									id="previewTemplate"
+									[innerHtml]="previewTemplate"
+								></div>
+							</div>
+						</nb-card-body>
+					</nb-card>
+				</nb-layout-column>
+			</nb-layout>
+		</nb-card-body>
+	</nb-card>
+</form>

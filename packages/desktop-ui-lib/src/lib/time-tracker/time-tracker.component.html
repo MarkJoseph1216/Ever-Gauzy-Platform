@@ -1,0 +1,324 @@
+<nb-layout>
+	<nb-layout-column class="top-space">
+		<div class="row full-height">
+			<div class="col-12 full-height no-padding full-width">
+				<nb-card class="full-height max-width">
+					<nb-card-body>
+						<div class="row">
+							<div class="col-3">
+								<nb-icon
+									class="start-button"
+									icon="play-circle"
+									*ngIf="!start"
+									(click)="toggleStart(true)"
+									[disabled]="loading"
+								>
+								</nb-icon>
+								<nb-icon
+									class="start-button"
+									icon="stop-circle-outline"
+									*ngIf="start"
+									(click)="toggleStart(false)"
+									[disabled]="loading"
+								>
+								</nb-icon>
+							</div>
+							<div class="col-6 timer-box">
+								<div class="timer-container">
+									{{ timeRun.hours }}: {{ timeRun.minute }}:{{
+										timeRun.second
+									}}
+								</div>
+							</div>
+							<div class="col-12 form-group tp-padding">
+								<label>Client</label>
+								<ng-select
+									[class]="
+										errors.client ? 'error-border' : ''
+									"
+									[clearable]="true"
+									placeholder="Client"
+									[(ngModel)]="organizationContactId"
+									[items]="organizationContacts"
+									bindValue="id"
+									bindLabel="name"
+									(ngModelChange)="setClient($event, dialog)"
+								>
+								</ng-select>
+							</div>
+							<div class="col-12 form-group">
+								<label>Project</label>
+								<ng-select
+									[class]="
+										errors.project ? 'error-border' : ''
+									"
+									[clearable]="true"
+									placeholder="Project"
+									[(ngModel)]="projectSelect"
+									[items]="projects"
+									bindValue="id"
+									bindLabel="name"
+									(ngModelChange)="setProject($event)"
+								>
+								</ng-select>
+							</div>
+							<div class="col-12 form-group">
+								<label>Task</label>
+								<ng-select
+									[class]="errors.task ? 'error-border' : ''"
+									[clearable]="true"
+									placeholder="Task"
+									[(ngModel)]="taskSelect"
+									[items]="tasks"
+									bindValue="id"
+									bindLabel="title"
+									(ngModelChange)="setTask($event)"
+								>
+								</ng-select>
+							</div>
+							<div class="col-12 form-group">
+								<label>Working on:</label>
+								<textarea
+									nbInput
+									fullWidth
+									placeholder="Note"
+									status="basic"
+									[(ngModel)]="note"
+									[status]="errors.note ? 'danger' : 'basic'"
+									(ngModelChange)="descriptionChange($event)"
+								></textarea>
+							</div>
+							<div class="col-12 form-group tp-padding">
+								<div class="row">
+									<div
+										class="col-12"
+										*ngIf="
+											appSetting &&
+											appSetting.visibleAwOption
+										"
+									>
+										<div class="row">
+											<div class="col-8">
+												<nb-checkbox
+													[checked]="aw"
+													(change)="setAW($event)"
+													>ActivityWatch</nb-checkbox
+												>
+											</div>
+											<div class="col-4">
+												<nb-icon
+													*ngIf="awCheck"
+													[icon]="iconAw"
+													[status]="statusIcon"
+												>
+												</nb-icon>
+											</div>
+										</div>
+									</div>
+
+									<div
+										class="col-12"
+										*ngIf="
+											appSetting &&
+											appSetting.visibleWakatimeOption
+										"
+									>
+										<div class="row">
+											<div class="col-8">
+												<nb-checkbox [disabled]="true"
+													>Wakatime</nb-checkbox
+												>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-12">
+								<div class="row">
+									<div class="col-11 center-text">
+										<span class="org-name">
+											{{
+												userOrganization.name
+													? userOrganization.name
+													: 'UNKNOWN'
+											}}
+										</span>
+									</div>
+									<div class="col-11 center-text">
+										<span class="work-today"
+											>Total Worked Today
+											{{ todayDuration.hours }}:{{
+												todayDuration.minutes
+											}}</span
+										>
+									</div>
+								</div>
+							</div>
+							<div class="col-12 tp-padding">
+								<div class="row">
+									<div class="col-12 center-text">
+										<nb-card>
+											<nb-card-header>
+												<div class="row">
+													<div
+														class="col-6 screen-capture-label-left"
+													>
+														<span
+															>Last screen
+															capture</span
+														>
+													</div>
+													<div
+														*ngIf="
+															lastScreenCapture.textTime
+														"
+														class="col-6 screen-capture-label-right"
+													>
+														<span>{{
+															lastScreenCapture.textTime
+														}}</span>
+													</div>
+												</div>
+											</nb-card-header>
+											<nb-card-body class="max-card">
+												<img
+													class="screen-capture-img"
+													*ngIf="
+														lastScreenCapture.fullUrl
+													"
+													[src]="
+														lastScreenCapture.fullUrl
+													"
+												/>
+												<nb-icon
+													*ngIf="
+														!lastScreenCapture.fullUrl
+													"
+													icon="image-outline"
+													class="icon-img-size"
+												>
+												</nb-icon>
+												<div class="overlay-img">
+													<div class="row">
+														<div
+															class="col-8 img-button"
+														>
+															<div class="row">
+																<div
+																	class="col-6"
+																>
+																	<button
+																		nbButton
+																		status="primary"
+																		(click)="
+																			showImage()
+																		"
+																	>
+																		<nb-icon
+																			icon="eye"
+																		></nb-icon>
+																	</button>
+																</div>
+																<div
+																	class="col-6"
+																>
+																	<button
+																		nbButton
+																		status="danger"
+																		(click)="
+																			open(
+																				dialog,
+																				{
+																					type:
+																						'deleteLog'
+																				}
+																			)
+																		"
+																	>
+																		<nb-icon
+																			icon="trash-2"
+																		></nb-icon>
+																	</button>
+																</div>
+															</div>
+														</div>
+													</div>
+												</div>
+											</nb-card-body>
+										</nb-card>
+									</div>
+								</div>
+							</div>
+							<div
+								class="col-12"
+								*ngIf="lastScreenCapture.textTime"
+							>
+								<div class="last-screenshot-time">
+									<div class="col-12 center-text">
+										<span
+											>Last screenshot taken at
+											{{
+												lastScreenCapture?.recordedAt
+													| date: 'H:mm'
+											}}</span
+										>
+									</div>
+								</div>
+							</div>
+							<ng-template #dialog let-data let-ref="dialogRef">
+								<nb-card accent="warning">
+									<nb-card-header>Warning</nb-card-header>
+									<nb-card-body>{{ data }}</nb-card-body>
+									<nb-card-footer>
+										<div class="row">
+											<div class="col-4">
+												<button
+													status="primary"
+													nbButton
+													(click)="ref.close(false)"
+												>
+													No
+												</button>
+											</div>
+											<div class="col-3">
+												<button
+													status="danger"
+													nbButton
+													(click)="ref.close(true)"
+												>
+													Yes
+												</button>
+											</div>
+										</div>
+									</nb-card-footer>
+								</nb-card>
+							</ng-template>
+						</div>
+					</nb-card-body>
+				</nb-card>
+			</div>
+		</div>
+	</nb-layout-column>
+	<nb-layout-footer fixed>
+		<button
+			class="footer-button"
+			nbButton
+			ghost
+			*ngIf="userData && userData.name"
+			size="small"
+			(click)="openSetting()"
+		>
+			<nb-icon icon="settings-2-outline"></nb-icon>
+			{{ userData.name }}
+		</button>
+		<button
+			#dialogOpenBtn
+			(click)="
+				open(dialog, {
+					type: 'timeTrackingOption'
+				})
+			"
+			style="display: none"
+		></button>
+	</nb-layout-footer>
+</nb-layout>

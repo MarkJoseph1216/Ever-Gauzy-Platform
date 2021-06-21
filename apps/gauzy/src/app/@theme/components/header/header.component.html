@@ -1,0 +1,165 @@
+<div
+	class="header-container"
+	[class.left]="position === 'normal'"
+	[class.right]="position === 'inverse'"
+>
+	<div class="logo-container">
+		<a (click)="toggleSidebar()" href="#" class="sidebar-toggle">
+			<nb-icon icon="menu-2-outline"></nb-icon>
+		</a>
+
+		<div
+			*ngIf="theme === 'default' || theme === 'corporate'; else whiteLogo"
+			class="logo"
+			(click)="navigateHome()"
+		>
+			<img src="assets/images/logos/logo_Gauzy.svg" />
+		</div>
+		<ng-template #whiteLogo>
+			<img src="assets/images/logos/logo_Gauzy_white.svg" />
+		</ng-template>
+	</div>
+</div>
+
+<div class="header-container">
+	<nb-actions
+		size="small"
+		[class.left]="position === 'normal'"
+		[class.right]="position === 'inverse'"
+	>
+		<nb-action class="show-large-up">
+			<button
+				nbButton
+				status="success"
+				[nbContextMenu]="createContextMenu"
+				nbContextMenuTag="create-context-menu"
+			>
+				+ {{ 'BUTTONS.CREATE' | translate }}
+			</button>
+		</nb-action>
+
+		<nb-action
+			*ngIf="
+				showProjectsSelector &&
+				!showExtraActions &&
+				selectorsVisibility?.project
+			"
+			class="show-large-up"
+		>
+			<ga-project-selector> </ga-project-selector>
+		</nb-action>
+
+		<nb-action
+			*ngIf="
+				showEmployeesSelector &&
+				!showExtraActions &&
+				selectorsVisibility?.employee
+			"
+			class="show-large-up"
+		>
+			<ga-employee-selector
+				class="header-selector employee-selector"
+			></ga-employee-selector>
+		</nb-action>
+
+		<nb-action
+			*ngIf="
+				showDateSelector &&
+				!showExtraActions &&
+				selectorsVisibility?.date
+			"
+			class="show-large-up"
+		>
+			<ga-date-selector class="date-selector"></ga-date-selector>
+		</nb-action>
+
+		<nb-action
+			*ngIf="
+				showOrganizationsSelector && selectorsVisibility?.organization
+			"
+			class="show-large-up organization-selector-container"
+		>
+			<ga-organization-selector
+				class="header-selector organization-selector"
+			></ga-organization-selector>
+		</nb-action>
+
+		<nb-action
+			icon="options-2-outline"
+			class="toggle-layout"
+			class="show-large-down"
+			(click)="toggleExtraActions()"
+		></nb-action>
+		<nb-action
+			icon="message-circle-outline"
+			class="toggle-layout"
+			[nbContextMenu]="supportContextMenu"
+		></nb-action>
+
+		<nb-action
+			*ngIf="user?.employee?.id"
+			class="timer-action"
+			(click)="isElectron ? '' : toggleTimerWindow()"
+		>
+			<nb-icon class="mr-3" icon="clock-outline"></nb-icon>
+			{{ timerDuration }}
+		</nb-action>
+
+		<nb-action
+			*ngFor="
+				let action of navigationBuilderService.sidebarActions$ | async
+			"
+			[icon]="action.icon"
+			[class]="action.class"
+			(click)="toggleSidebarActions(action)"
+		>
+		</nb-action>
+	</nb-actions>
+</div>
+
+<div
+	(window:resize)="closeExtraActionsIfLarge($event)"
+	class="extra-actions"
+	*ngIf="showExtraActions"
+>
+	<div>
+		<h6>{{ 'HEADER.SELECT_PROJECT' | translate }}</h6>
+	</div>
+
+	<ga-project-selector
+		*ngIf="showProjectsSelector"
+		class="header-selector project-selector"
+	>
+	</ga-project-selector>
+
+	<div>
+		<h6>{{ 'HEADER.SELECT_EMPLOYEE' | translate }}</h6>
+	</div>
+
+	<ga-employee-selector
+		*ngIf="showEmployeesSelector"
+		class="header-selector employee-selector"
+	></ga-employee-selector>
+
+	<div>
+		<h6>{{ 'HEADER.SELECT_A_DATE' | translate }}</h6>
+	</div>
+
+	<ga-date-selector
+		*ngIf="showDateSelector && showExtraActions"
+		class="date-selector"
+	></ga-date-selector>
+
+	<div>
+		<h6>{{ 'HEADER.SELECT_AN_ORGANIZATION' | translate }}</h6>
+	</div>
+
+	<ga-organization-selector
+		*ngIf="showOrganizationsSelector"
+		class="header-selector organization-selector"
+	></ga-organization-selector>
+</div>
+
+<ng-template [ngIf]="user?.employee?.id">
+	<ngx-time-tracker></ngx-time-tracker>
+</ng-template>
