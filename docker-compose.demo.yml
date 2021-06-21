@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.3'
 
 services:
     db:
@@ -99,7 +99,7 @@ services:
             NODE_ENV: ${NODE_ENV:-development}
             DB_HOST: db
             API_BASE_URL: ${API_BASE_URL:-http://gauzy-api.invisiblehand.ph:3000}
-            SENTRY_DSN: ${SENTRY_DSN:-}
+            SENTRY_DSN: $${SENTRY_DSN:-}
         env_file:
             - .env
         restart: on-failure
@@ -124,12 +124,12 @@ services:
             NODE_ENV: ${NODE_ENV:-development}
             API_BASE_URL: ${API_BASE_URL:-http://gauzy-api.invisiblehand.ph:3000}
             CLIENT_BASE_URL: ${CLIENT_BASE_URL:-http://gauzy.invisiblehand.ph:4200}
-            SENTRY_DSN: ${SENTRY_DSN:-}
-            CHATWOOT_SDK_TOKEN: ${CHATWOOT_SDK_TOKEN:-}
-            CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:-}
-            CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:-}
-            GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
-            GOOGLE_PLACE_AUTOCOMPLETE: ${GOOGLE_PLACE_AUTOCOMPLETE:-false}
+            SENTRY_DSN: $${SENTRY_DSN:-}
+            CHATWOOT_SDK_TOKEN: $${CHATWOOT_SDK_TOKEN:-}
+            CLOUDINARY_CLOUD_NAME: $${CLOUDINARY_CLOUD_NAME:-}
+            CLOUDINARY_API_KEY: $${CLOUDINARY_API_KEY:-}
+            GOOGLE_MAPS_API_KEY: $${GOOGLE_MAPS_API_KEY:-}
+            GOOGLE_PLACE_AUTOCOMPLETE: $${GOOGLE_PLACE_AUTOCOMPLETE:-false}
             DEFAULT_LATITUDE: ${DEFAULT_LATITUDE:-42.6459136}
             DEFAULT_LONGITUDE: ${DEFAULT_LONGITUDE:-23.3332736}
             DEFAULT_CURRENCY: ${DEFAULT_CURRENCY:-USD}
